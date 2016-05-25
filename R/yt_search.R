@@ -48,7 +48,7 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 	# For queries with spaces
 	term = paste0(unlist(strsplit(term, " ")), collapse="%20")
 
-	querylist <- list(part="id,snippet", q = term, maxResults=maxResults, channelId=channelId, type=type, channelType=channelType, eventType= eventType, 
+	querylist <- list(part="id,snippet", q = term, maxResults=10, channelId=channelId, type=type, channelType=channelType, eventType= eventType, 
 		location= location, publishedAfter=publishedAfter, publishedBefore=publishedBefore, videoDefinition = videoDefinition, videoCaption= videoCaption, 
 		videoType=videoType, videoSyndicated=videoSyndicated, videoLicense= videoLicense)
 
