@@ -68,6 +68,7 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 		
 		for(i in 2:pageCount){
 			queryList$pageToken <- nextPageToken
+			cat(queryList)
 			nextRes <- tuber_GET("search", querylist)
 			res <- c(res, nextRes)
 			nextPageToken <- nextRes$nextPageToken
