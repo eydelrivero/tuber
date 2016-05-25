@@ -88,8 +88,10 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 	if (res$pageInfo$totalResults != 0) {
 		process_row <- function(x){
 			stats <- list()
-			if(getStats)
+			if(getStats){
 				stats <- get_stats(x$id$videoId)
+				stats <- lapply(stats, as.numeric)
+			}
 			return(c(id = x$id$videoId, x$snippet, stats))
 		}
 		
