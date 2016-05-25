@@ -30,7 +30,8 @@
 #' }
 
 yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NULL, type="video", eventType=NULL, location= NULL, locationRadius=NULL, 
-	publishedAfter=NULL, publishedBefore=NULL, videoDefinition = "any", videoCaption="any", videoLicense="any", videoSyndicated="any", videoType="any") {
+	publishedAfter=NULL, publishedBefore=NULL, videoDefinition = "any", videoCaption="any", videoLicense="any", videoSyndicated="any", videoType="any", 
+	getStats = FALSE) {
 
 	if (is.null(term)) stop("Must specify a search term")
 	# if (maxResults < 0 | maxResults > 50) stop("maxResults only takes a value between 0 and 50")
@@ -84,7 +85,14 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 	resdf <- NA
 
 	if (res$pageInfo$totalResults != 0) {
-		simple_res  <- lapply(res$items, function(x) c(id = x$id$videoId, x$snippet))
+		process_row <- function(x){
+			stats <- list()
+			if(getStats)
+				stats <- get_stats(x$id$videoId)
+			return(c(id = x$id$videoId, x$snippet, stats))
+		}
+		
+		simple_res  <- lapply(res$items, process)
 		# resdf       <- as.data.frame(do.call(rbind, simple_res))
 		resdf       <- ldply(simple_res, data.frame, stringsAsFactors = FALSE)
 		# colnames(resdf)[1] <- "id"
