@@ -48,7 +48,7 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 	# For queries with spaces
 	term = paste0(unlist(strsplit(term, " ")), collapse="%20")
 
-	querylist <- list(part="id,snippet", q = term, maxResults=10, channelId=channelId, type=type, channelType=channelType, eventType= eventType, 
+	querylist <- list(part="id,snippet", q = term, maxResults=maxResults, channelId=channelId, type=type, channelType=channelType, eventType= eventType, 
 		location= location, publishedAfter=publishedAfter, publishedBefore=publishedBefore, videoDefinition = videoDefinition, videoCaption= videoCaption, 
 		videoType=videoType, videoSyndicated=videoSyndicated, videoLicense= videoLicense)
 
@@ -57,7 +57,7 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 	resdf <- NA
 
 	if (res$pageInfo$totalResults != 0) {
-		simple_res  <- lapply(res$items, function(x) x$snippet)
+		simple_res  <- lapply(res$items, function(x) c(x$id$videoId, x$snippet))
 		resdf       <- as.data.frame(do.call(rbind, simple_res))
 	} else {
 		resdf <- 0
