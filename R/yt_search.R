@@ -49,31 +49,33 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 	# For queries with spaces
 	term = paste0(unlist(strsplit(term, " ")), collapse="%20")
 
+	requestLimit <- 50
+	pageCount <- 0
+	
+	#paginate to get results beyond the limit
+	if(maxResults > requestLimit) {
+		pageCount <- floor(maxResults / requestLimit)
+		
+		if(maxResults %% requestLimit > 0)
+			pageCount <- pageCount + 1
+			
+		maxResults <- requestLimit
+	}
+	
 	querylist <- list(part="id,snippet", q = term, maxResults=maxResults, channelId=channelId, type=type, channelType=channelType, eventType= eventType, 
 		location= location, publishedAfter=publishedAfter, publishedBefore=publishedBefore, videoDefinition = videoDefinition, videoCaption= videoCaption, 
 		videoType=videoType, videoSyndicated=videoSyndicated, videoLicense= videoLicense)
 
 	res <- tuber_GET("search", querylist)
+		
+	nextPageToken <- res$nextPageToken
 	
-	requestLimit <- 50
-	
-	#paginate to get results beyond the limit
-	if(maxResults > requestLimit) {
-		pageCount <- maxResults / requestLimit
-		
-		if(maxResults %% requestLimit > 0)
-			pageCount <- pageCount + 1
-		
-		nextPageToken <- res$nextPageToken
-		
-		for(i in 2:pageCount){
-			queryList$pageToken <- nextPageToken
-			cat(queryList)
-			nextRes <- tuber_GET("search", querylist)
-			res <- c(res, nextRes)
-			nextPageToken <- nextRes$nextPageToken
-		}
-		
+	for(i in 2:pageCount){
+		queryList$pageToken <- nextPageToken
+		cat(queryList)
+		nextRes <- tuber_GET("search", querylist)
+		res <- c(res, nextRes)
+		nextPageToken <- nextRes$nextPageToken
 	}
 
 	resdf <- NA
