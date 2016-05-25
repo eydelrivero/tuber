@@ -92,7 +92,7 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 			return(c(id = x$id$videoId, x$snippet, stats))
 		}
 		
-		simple_res  <- lapply(res$items, process)
+		simple_res  <- lapply(res$items, process_row)
 		# resdf       <- as.data.frame(do.call(rbind, simple_res))
 		resdf       <- ldply(simple_res, data.frame, stringsAsFactors = FALSE)
 		# colnames(resdf)[1] <- "id"
