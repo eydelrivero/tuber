@@ -27,7 +27,7 @@ get_stats <- function (video_id=NULL) {
 	cat('No. of Favorites', res$favoriteCount, "\n")
 	cat('No. of Comments', res$commentCount, "\n")
 	
-	resdf <- ldply(res, data.frame, stringsAsFactors = FALSE)
+	# resdf <- ldply(res, data.frame, stringsAsFactors = FALSE)
  
-	return(invisible(resdf))
+	return(invisible(res))
 }
