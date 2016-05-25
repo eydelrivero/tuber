@@ -33,7 +33,8 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 	publishedAfter=NULL, publishedBefore=NULL, videoDefinition = "any", videoCaption="any", videoLicense="any", videoSyndicated="any", videoType="any") {
 
 	if (is.null(term)) stop("Must specify a search term")
-	if (maxResults < 0 | maxResults > 50) stop("maxResults only takes a value between 0 and 50")
+	# if (maxResults < 0 | maxResults > 50) stop("maxResults only takes a value between 0 and 50")
+	if (maxResults < 0) stop("maxResults only takes non negative values")
 	if (!(videoLicense %in% c("any", "creativeCommon", "youtube"))) stop("videoLicense can only take values: any, creativeCommon, or youtube")
 	if (!(videoSyndicated %in% c("any", "true"))) stop("videoSyndicated can only take values: any or true")
 	if (!(videoType %in% c("any", "episode", "movie"))) stop("videoType can only take values: any, episode, or movie")
@@ -53,6 +54,26 @@ yt_search <- function (term=NULL, maxResults=5, channelId= NULL, channelType=NUL
 		videoType=videoType, videoSyndicated=videoSyndicated, videoLicense= videoLicense)
 
 	res <- tuber_GET("search", querylist)
+	
+	requestLimit <- 50
+	
+	#paginate to get results beyond the limit
+	if(maxResults > requestLimit) {
+		pageCount <- maxResults / requestLimit
+		
+		if(maxResults %% requestLimit > 0)
+			pageCount <- pageCount + 1
+		
+		nextPageToken <- res$nextPageToken
+		
+		for(i in 2:pageCount){
+			queryList$pageToken <- nextPageToken
+			nextRes <- tuber_GET("search", querylist)
+			res <- c(res, nextRes)
+			nextPageToken <- nextRes$nextPageToken
+		}
+		
+	}
 
 	resdf <- NA
 
